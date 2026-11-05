@@ -1,0 +1,6 @@
+{
+  "name": "Circle",
+  "description": "Circle - A modern social media web app to connect and share moments.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
