@@ -164,17 +164,28 @@ export const PostCard: React.FC<PostCardProps> = ({
     }
   };
 
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showDeleteConfirm) {
+        setShowDeleteConfirm(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showDeleteConfirm]);
+
   return (
-    <article className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-xs hover:border-slate-300/90 transition-all duration-150">
+    <article className="bg-[#141416] border border-[#26262a] rounded-2xl p-5 transition-colors duration-150">
       <div className="flex items-start justify-between gap-3">
         {/* Author Avatar and Names */}
-        <div className="flex items-start gap-3.5 min-w-0">
+        <div className="flex items-center gap-3.5 min-w-0">
           <Link
             to={`/u/${username}`}
-            className="shrink-0 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 rounded-full group"
+            className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b0c]"
             title={`View @${username}'s profile`}
           >
-            <div className="w-11 h-11 rounded-full bg-red-600 text-white font-bold text-sm flex items-center justify-center ring-2 ring-slate-100 shadow-2xs group-hover:scale-105 transition-transform overflow-hidden">
+            <div className="w-11 h-11 rounded-full bg-[#26262a] text-[#f2f2f3] font-bold text-sm flex items-center justify-center border border-[#3a3a40] overflow-hidden">
               {hasAvatarImg ? (
                 <img
                   src={avatarUrl!}
@@ -188,24 +199,25 @@ export const PostCard: React.FC<PostCardProps> = ({
             </div>
           </Link>
 
-          <div className="min-w-0 leading-tight pt-0.5">
+          <div className="min-w-0 leading-tight">
+            {/* avatar + bold display name (link) + muted '@username · relative time' on one line */}
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
               <Link
                 to={`/u/${username}`}
-                className="font-bold text-slate-900 text-sm sm:text-base hover:text-indigo-600 hover:underline transition-colors truncate"
+                className="font-bold text-[#f2f2f3] text-[15px] hover:text-[#d4d4d8] hover:underline transition-colors truncate"
               >
                 {displayName}
               </Link>
               <Link
                 to={`/u/${username}`}
-                className="text-xs text-slate-400 hover:text-slate-600 truncate"
+                className="text-[13px] text-[#a1a1a8] hover:text-[#f2f2f3] truncate"
               >
                 @{username}
               </Link>
-              <span className="text-slate-300 text-xs select-none">·</span>
+              <span className="text-[#3a3a40] text-xs select-none">·</span>
               <time
                 dateTime={post.created_at}
-                className="text-xs text-slate-400 shrink-0"
+                className="text-[13px] text-[#a1a1a8] shrink-0"
                 title={new Date(post.created_at).toLocaleString()}
               >
                 {relativeTime}
@@ -219,11 +231,11 @@ export const PostCard: React.FC<PostCardProps> = ({
           {showDetailLink && (
             <Link
               to={`/post/${post.id}`}
-              className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+              className="p-2 text-[#a1a1a8] hover:text-[#f2f2f3] hover:bg-[#1c1c1f] rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3]"
               title="View post detail"
               aria-label="View post detail"
             >
-              <ExternalLink className="w-4 h-4" />
+              <ExternalLink className="w-4 h-4" strokeWidth={1.75} />
             </Link>
           )}
 
@@ -232,78 +244,75 @@ export const PostCard: React.FC<PostCardProps> = ({
               type="button"
               onClick={() => setShowDeleteConfirm(true)}
               disabled={isDeleting}
-              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+              className="p-2 text-[#a1a1a8] hover:text-[#f2f2f3] hover:bg-[#1c1c1f] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3]"
               title="Delete post"
               aria-label="Delete post"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4" strokeWidth={1.75} />
             </button>
           )}
         </div>
       </div>
 
-      {/* Post Content */}
-      <div className="mt-3 text-slate-800 text-sm sm:text-[15px] leading-relaxed whitespace-pre-wrap break-words pl-[58px] -mt-1 sm:-mt-2">
+      {/* Post Content: 16px below */}
+      <div className="mt-4 text-[#f2f2f3] text-[15px] leading-relaxed whitespace-pre-wrap break-words">
         {post.content}
       </div>
 
-      {/* Post Card Footer: Heart Like and Comment Buttons */}
-      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between pl-[58px]">
+      {/* Post Card Footer: Action row with ghost icon buttons (min 44px height, muted, hover #1c1c1f) */}
+      <div className="mt-4 pt-3 border-t border-[#26262a] flex items-center justify-between min-h-[44px]">
         <div className="flex items-center gap-2">
           {/* Heart / Like Button */}
           <button
             type="button"
             onClick={handleHeartClick}
             disabled={isTogglingLike || !currentUserId}
-            className={`inline-flex items-center gap-1.5 py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed group ${
-              liked
-                ? 'text-rose-600 bg-rose-50/80 hover:bg-rose-100/80'
-                : 'text-slate-500 hover:text-rose-600 hover:bg-slate-100/80'
+            className={`min-h-[44px] inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-semibold transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#1c1c1f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] ${
+              liked ? 'text-[#f2f2f3]' : 'text-[#a1a1a8] hover:text-[#f2f2f3]'
             }`}
             aria-label={liked ? 'Unlike post' : 'Like post'}
             title={liked ? 'Unlike' : 'Like'}
           >
             <Heart
-              className={`w-4 h-4 transition-transform active:scale-125 ${
+              className={`w-5 h-5 transition-transform duration-150 ${
                 liked
-                  ? 'fill-rose-500 text-rose-500 scale-105'
-                  : 'text-slate-400 group-hover:text-rose-500'
+                  ? 'fill-[#f2f2f3] text-[#f2f2f3]'
+                  : 'text-[#a1a1a8]'
               }`}
+              strokeWidth={1.75}
             />
-            <span className="tabular-nums">{likeCount}</span>
+            <span className="tabular-nums text-[13px]">{likeCount}</span>
           </button>
 
           {/* Comment Button */}
           <button
             type="button"
             onClick={() => setShowComments(!showComments)}
-            className={`inline-flex items-center gap-1.5 py-1.5 px-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              showComments
-                ? 'bg-indigo-50 text-indigo-700'
-                : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-100/80'
+            className={`min-h-[44px] inline-flex items-center gap-2 px-3 py-2 rounded-full text-xs font-semibold transition-colors duration-150 cursor-pointer hover:bg-[#1c1c1f] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] ${
+              showComments ? 'text-[#f2f2f3] bg-[#1c1c1f]' : 'text-[#a1a1a8] hover:text-[#f2f2f3]'
             }`}
             aria-expanded={showComments}
             aria-label={showComments ? `Hide comments (${commentCount})` : `Show comments (${commentCount})`}
             title="View comments"
           >
-            <MessageCircle className="w-4 h-4" />
-            <span className="tabular-nums">{commentCount}</span>
+            <MessageCircle className="w-5 h-5 text-[#a1a1a8]" strokeWidth={1.75} />
+            <span className="tabular-nums text-[13px]">{commentCount}</span>
           </button>
         </div>
 
         {showDetailLink && (
           <Link
             to={`/post/${post.id}`}
-            className="text-xs font-semibold text-slate-400 hover:text-indigo-600 hover:underline transition-colors"
+            className="text-[13px] font-medium text-[#a1a1a8] hover:text-[#f2f2f3] transition-colors"
           >
             Thread
           </Link>
         )}
       </div>
 
-      {/* Inline Comments Section */}
+      {/* Inline Comments Section: Indented list inside post card */}
       {showComments && (
-        <div className="mt-3 pl-[58px] animate-in fade-in duration-150">
+        <div className="mt-3 pl-2 sm:pl-4 border-l border-[#26262a] animate-in fade-in duration-150">
           <CommentSection
             postId={post.id}
             onCommentCountChange={handleCommentCountDelta}
@@ -311,24 +320,28 @@ export const PostCard: React.FC<PostCardProps> = ({
         </div>
       )}
 
-      {/* Delete Confirmation Modal / Backdrop */}
+      {/* Delete Confirmation Modal / Backdrop (dimmed #000 at 70% overlay, Esc closes) */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-150">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-150"
+          onClick={() => setShowDeleteConfirm(false)}
+        >
           <div
-            className="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-200 p-6 animate-in zoom-in-95 duration-150"
+            className="bg-[#141416] w-full max-w-sm rounded-2xl shadow-2xl border border-[#26262a] p-6 animate-in zoom-in-95 duration-150"
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-confirm-title"
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start gap-3.5">
-              <div className="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-full bg-[#1c1c1f] border border-[#26262a] text-[#f2f2f3] flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-[#f2f2f3]" strokeWidth={1.75} />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 id="delete-confirm-title" className="text-base font-bold text-slate-900">
+                <h3 id="delete-confirm-title" className="text-base font-bold text-[#f2f2f3]">
                   Delete post?
                 </h3>
-                <p className="mt-1 text-xs text-slate-500 leading-relaxed">
+                <p className="mt-1 text-[13px] text-[#a1a1a8] leading-relaxed">
                   This post will be permanently deleted from Circle. This action cannot be undone.
                 </p>
               </div>
@@ -339,7 +352,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                 type="button"
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={isDeleting}
-                className="px-3.5 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors disabled:opacity-50"
+                className="h-11 px-4 text-sm font-medium text-[#f2f2f3] hover:bg-[#1c1c1f] rounded-full border border-[#3a3a40] transition-colors disabled:opacity-50 cursor-pointer"
               >
                 Cancel
               </button>
@@ -347,11 +360,11 @@ export const PostCard: React.FC<PostCardProps> = ({
                 type="button"
                 onClick={handleDeleteConfirm}
                 disabled={isDeleting}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+                className="h-11 px-5 inline-flex items-center gap-2 bg-[#f2f2f3] hover:bg-[#d4d4d8] text-[#0b0b0c] font-semibold text-sm rounded-full transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {isDeleting ? (
                   <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     <span>Deleting...</span>
                   </>
                 ) : (

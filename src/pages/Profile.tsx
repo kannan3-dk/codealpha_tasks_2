@@ -479,10 +479,21 @@ export const Profile: React.FC = () => {
     }
   };
 
+  // Handle Escape key to close edit modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isEditing) {
+        setIsEditing(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isEditing]);
+
   // Loading state
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="max-w-[720px] mx-auto px-4 py-8 space-y-6">
         <ProfileHeaderSkeleton />
         <div className="space-y-4">
           <PostSkeleton />
@@ -495,28 +506,30 @@ export const Profile: React.FC = () => {
   // Network/Query Error state
   if (fetchError) {
     return (
-      <div className="bg-white border border-rose-200 rounded-2xl p-8 sm:p-10 text-center max-w-lg mx-auto shadow-xs">
-        <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4">
-          <AlertCircle className="w-7 h-7" />
-        </div>
-        <h2 className="text-xl font-bold text-slate-900">Unable to load profile</h2>
-        <p className="mt-2 text-sm text-slate-600">{fetchError}</p>
-        <div className="mt-6 flex justify-center gap-3">
-          <button
-            type="button"
-            onClick={fetchProfileAndStats}
-            aria-label="Retry loading profile"
-            className="px-4 py-2 bg-indigo-600 text-white font-semibold text-sm rounded-xl hover:bg-indigo-700 transition-colors cursor-pointer"
-          >
-            Try Again
-          </button>
-          <Link
-            to="/"
-            aria-label="Return to Home feed"
-            className="px-4 py-2 bg-slate-100 text-slate-700 font-semibold text-sm rounded-xl hover:bg-slate-200 transition-colors"
-          >
-            Back to Home
-          </Link>
+      <div className="max-w-[720px] mx-auto px-4 py-8">
+        <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-8 sm:p-10 text-center">
+          <div className="w-14 h-14 rounded-2xl bg-[#1c1c1f] border border-[#26262a] text-[#f2f2f3] flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-7 h-7" strokeWidth={1.75} />
+          </div>
+          <h2 className="text-xl font-bold text-[#f2f2f3]">Unable to load profile</h2>
+          <p className="mt-2 text-sm text-[#a1a1a8]">{fetchError}</p>
+          <div className="mt-6 flex justify-center gap-3">
+            <button
+              type="button"
+              onClick={fetchProfileAndStats}
+              aria-label="Retry loading profile"
+              className="h-11 px-5 bg-[#f2f2f3] hover:bg-[#d4d4d8] text-[#0b0b0c] font-semibold text-sm rounded-full transition-colors cursor-pointer"
+            >
+              Try Again
+            </button>
+            <Link
+              to="/"
+              aria-label="Return to Home feed"
+              className="h-11 px-5 border border-[#3a3a40] text-[#f2f2f3] hover:bg-[#1c1c1f] font-medium text-sm rounded-full transition-colors flex items-center justify-center"
+            >
+              Back to Home
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -525,23 +538,25 @@ export const Profile: React.FC = () => {
   // User not found state
   if (notFound || !profile) {
     return (
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-8 sm:p-12 text-center max-w-lg mx-auto shadow-xs">
-        <div className="w-16 h-16 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4 ring-8 ring-rose-50/50">
-          <User className="w-8 h-8" />
-        </div>
-        <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">User not found</h2>
-        <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-          The user <span className="font-semibold text-slate-900">@{username}</span> does not exist or may have been removed.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            aria-label="Return to Home feed"
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition-colors shadow-xs"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Return to Home</span>
-          </Link>
+      <div className="max-w-[720px] mx-auto px-4 py-8">
+        <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-8 sm:p-12 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-[#1c1c1f] border border-[#26262a] text-[#f2f2f3] flex items-center justify-center mx-auto mb-4">
+            <User className="w-8 h-8" strokeWidth={1.75} />
+          </div>
+          <h2 className="text-2xl font-bold text-[#f2f2f3] tracking-tight">User not found</h2>
+          <p className="mt-2 text-sm text-[#a1a1a8] leading-relaxed">
+            The user <span className="font-semibold text-[#f2f2f3]">@{username}</span> does not exist or may have been removed.
+          </p>
+          <div className="mt-6">
+            <Link
+              to="/"
+              aria-label="Return to Home feed"
+              className="inline-flex items-center gap-2 h-11 px-6 bg-[#f2f2f3] hover:bg-[#d4d4d8] text-[#0b0b0c] font-semibold text-sm rounded-full transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" strokeWidth={1.75} />
+              <span>Return to Home</span>
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -559,14 +574,14 @@ export const Profile: React.FC = () => {
   const initials = getInitials(profile.display_name, profile.username);
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-[720px] mx-auto px-4 py-8 space-y-6">
       {/* Profile Header Card */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 shadow-xs">
+      <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 sm:gap-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6 flex-1 min-w-0">
-            {/* Avatar: Image with fallback to initials circle */}
+            {/* 88px Avatar */}
             <div className="relative shrink-0">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-red-600 text-white font-extrabold text-2xl sm:text-3xl flex items-center justify-center ring-4 ring-slate-100 shadow-md overflow-hidden">
+              <div className="w-[88px] h-[88px] rounded-full bg-[#26262a] text-[#f2f2f3] font-bold text-2xl flex items-center justify-center border-2 border-[#3a3a40] overflow-hidden">
                 {hasAvatarImg ? (
                   <img
                     src={profile.avatar_url!}
@@ -583,50 +598,52 @@ export const Profile: React.FC = () => {
             {/* User details */}
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-2.5">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight truncate">
+                {/* 28px Page title name */}
+                <h1 className="text-[28px] font-bold text-[#f2f2f3] tracking-[-0.02em] leading-tight truncate">
                   {profile.display_name}
                 </h1>
                 {isCurrentUser && (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/60">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#1c1c1f] text-[#f2f2f3] border border-[#26262a]">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#f2f2f3]" strokeWidth={1.75} />
                     <span>You</span>
                   </span>
                 )}
               </div>
 
-              <p className="text-sm font-semibold text-slate-500 mt-0.5">@{profile.username}</p>
+              {/* Muted '@username · Joined date' on one line */}
+              <div className="flex items-center gap-2 text-sm text-[#a1a1a8] mt-1">
+                <span>@{profile.username}</span>
+                {formattedJoinedDate && (
+                  <>
+                    <span className="text-[#3a3a40] select-none">·</span>
+                    <span>Joined {formattedJoinedDate}</span>
+                  </>
+                )}
+              </div>
 
               {/* Bio */}
               {profile.bio ? (
-                <p className="mt-3 text-sm text-slate-700 leading-relaxed max-w-2xl whitespace-pre-line break-words">
+                <p className="mt-3 text-sm text-[#f2f2f3] leading-relaxed max-w-2xl whitespace-pre-line break-words">
                   {profile.bio}
                 </p>
               ) : isCurrentUser ? (
-                <p className="mt-2 text-xs text-slate-400 italic">
+                <p className="mt-2 text-xs text-[#8a8a92] italic">
                   No bio yet. Click &quot;Edit profile&quot; to add one.
                 </p>
               ) : null}
-
-              {/* Joined Date */}
-              {formattedJoinedDate && (
-                <div className="mt-3.5 flex items-center gap-1.5 text-xs font-medium text-slate-500">
-                  <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span>Joined {formattedJoinedDate}</span>
-                </div>
-              )}
             </div>
           </div>
 
-          {/* Action Button: Edit profile (for self) or Follow / Unfollow (for others) */}
+          {/* Action Button: Edit profile (own) or Follow / Unfollow (others) */}
           <div className="w-full sm:w-auto shrink-0 pt-2 sm:pt-0">
             {isCurrentUser ? (
               <button
                 type="button"
                 onClick={handleOpenEdit}
                 aria-label="Edit your profile"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200/80 text-slate-800 font-bold text-sm rounded-xl border border-slate-200/80 transition-all shadow-2xs hover:shadow-xs active:scale-[0.98] cursor-pointer"
+                className="w-full sm:w-auto h-11 px-5 inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#1c1c1f] text-[#f2f2f3] font-medium text-sm rounded-full border border-[#3a3a40] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3]"
               >
-                <Edit3 className="w-4 h-4 text-slate-600" />
+                <Edit3 className="w-4 h-4 text-[#a1a1a8]" strokeWidth={1.75} />
                 <span>Edit profile</span>
               </button>
             ) : currentUser ? (
@@ -635,22 +652,22 @@ export const Profile: React.FC = () => {
                 onClick={handleToggleFollow}
                 disabled={isFollowInFlight}
                 aria-label={isFollowing ? `Unfollow @${profile.username}` : `Follow @${profile.username}`}
-                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 font-bold text-sm rounded-xl transition-all shadow-xs cursor-pointer disabled:opacity-50 ${
+                className={`w-full sm:w-auto h-11 px-5 inline-flex items-center justify-center gap-2 font-semibold text-sm rounded-full transition-colors cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] ${
                   isFollowing
-                    ? 'bg-slate-100 hover:bg-rose-50 text-slate-800 hover:text-rose-600 border border-slate-200/90'
-                    : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-100'
+                    ? 'bg-transparent hover:bg-[#1c1c1f] text-[#f2f2f3] border border-[#3a3a40]'
+                    : 'bg-[#f2f2f3] hover:bg-[#d4d4d8] text-[#0b0b0c]'
                 }`}
               >
                 {isFollowInFlight ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : isFollowing ? (
                   <>
-                    <UserCheck className="w-4 h-4 text-indigo-600" />
+                    <UserCheck className="w-4 h-4" strokeWidth={1.75} />
                     <span>Following</span>
                   </>
                 ) : (
                   <>
-                    <UserPlus className="w-4 h-4" />
+                    <UserPlus className="w-4 h-4" strokeWidth={1.75} />
                     <span>Follow</span>
                   </>
                 )}
@@ -659,43 +676,43 @@ export const Profile: React.FC = () => {
           </div>
         </div>
 
-        {/* Three stat labels: Posts, Followers, Following (Clickable for Followers and Following) */}
-        <div className="mt-6 pt-5 border-t border-slate-100 flex items-center gap-7 sm:gap-10">
-          <div className="flex items-baseline gap-1.5">
-            <span className="font-extrabold text-slate-900 text-lg">{postsCount}</span>
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+        {/* Stats row (Posts, Followers, Following) as buttons with 20px bold number over 13px muted label */}
+        <div className="mt-6 pt-5 border-t border-[#26262a] flex items-center gap-8 sm:gap-10">
+          <div className="flex flex-col items-start">
+            <span className="text-[20px] font-bold text-[#f2f2f3] leading-none">{postsCount}</span>
+            <span className="text-[13px] text-[#a1a1a8] font-normal mt-1">
               {postsCount === 1 ? 'Post' : 'Posts'}
             </span>
           </div>
 
-          {/* Clickable Followers */}
+          {/* Clickable Followers button */}
           <button
             type="button"
             onClick={() => setModalMode('followers')}
-            className="flex items-baseline gap-1.5 hover:text-indigo-600 transition-colors cursor-pointer group text-left"
+            className="flex flex-col items-start hover:opacity-80 transition-opacity cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] rounded-lg p-0.5"
             title="View followers"
             aria-label={`View ${followersCount} followers`}
           >
-            <span className="font-extrabold text-slate-900 group-hover:text-indigo-600 text-lg transition-colors">
+            <span className="text-[20px] font-bold text-[#f2f2f3] leading-none">
               {followersCount}
             </span>
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 group-hover:text-indigo-600 transition-colors">
+            <span className="text-[13px] text-[#a1a1a8] font-normal mt-1">
               {followersCount === 1 ? 'Follower' : 'Followers'}
             </span>
           </button>
 
-          {/* Clickable Following */}
+          {/* Clickable Following button */}
           <button
             type="button"
             onClick={() => setModalMode('following')}
-            className="flex items-baseline gap-1.5 hover:text-indigo-600 transition-colors cursor-pointer group text-left"
+            className="flex flex-col items-start hover:opacity-80 transition-opacity cursor-pointer group text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] rounded-lg p-0.5"
             title="View following"
             aria-label={`View ${followingCount} following`}
           >
-            <span className="font-extrabold text-slate-900 group-hover:text-indigo-600 text-lg transition-colors">
+            <span className="text-[20px] font-bold text-[#f2f2f3] leading-none">
               {followingCount}
             </span>
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 group-hover:text-indigo-600 transition-colors">
+            <span className="text-[13px] text-[#a1a1a8] font-normal mt-1">
               Following
             </span>
           </button>
@@ -704,17 +721,14 @@ export const Profile: React.FC = () => {
 
       {/* Posts Section */}
       <div className="space-y-4">
-        {/* Section Header / Tab */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl px-6 pt-4 pb-3 flex items-center justify-between shadow-xs">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-indigo-600 border-b-2 border-indigo-600 pb-3 -mb-3 px-1 flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              <span>Posts</span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600">
-                {postsCount}
-              </span>
-            </span>
-          </div>
+        {/* Section Header: 'Posts' heading 18px */}
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-[18px] font-semibold text-[#f2f2f3] tracking-tight">
+            Posts
+          </h2>
+          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#1c1c1f] text-[#a1a1a8] border border-[#26262a]">
+            {postsCount}
+          </span>
         </div>
 
         {/* Posts Content */}
@@ -724,26 +738,26 @@ export const Profile: React.FC = () => {
             <PostSkeleton />
           </div>
         ) : postsError ? (
-          <div className="bg-white border border-rose-200 rounded-2xl p-8 text-center shadow-xs">
-            <AlertCircle className="w-9 h-9 text-rose-500 mx-auto mb-2" />
-            <p className="text-sm text-slate-700 font-semibold">{postsError}</p>
+          <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-8 text-center">
+            <AlertCircle className="w-9 h-9 text-[#f2f2f3] mx-auto mb-2" strokeWidth={1.75} />
+            <p className="text-sm text-[#a1a1a8] font-semibold">{postsError}</p>
             <button
               type="button"
               onClick={() => profile && fetchUserPosts(profile.id)}
               aria-label="Retry loading posts"
-              className="mt-3 px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-colors cursor-pointer"
+              className="mt-3 h-11 px-5 bg-[#f2f2f3] hover:bg-[#d4d4d8] text-[#0b0b0c] rounded-full text-xs font-semibold transition-colors cursor-pointer"
             >
               Try Again
             </button>
           </div>
         ) : userPosts.length === 0 ? (
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-10 sm:p-14 text-center shadow-xs">
+          <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-10 sm:p-14 text-center">
             <div className="max-w-sm mx-auto space-y-3">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto ring-8 ring-indigo-50/50">
-                <FileText className="w-7 h-7" />
+              <div className="w-14 h-14 rounded-2xl bg-[#1c1c1f] border border-[#26262a] text-[#f2f2f3] flex items-center justify-center mx-auto">
+                <FileText className="w-7 h-7" strokeWidth={1.75} />
               </div>
-              <h3 className="text-lg font-bold text-slate-900">No posts yet</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
+              <h3 className="text-lg font-bold text-[#f2f2f3]">No posts yet</h3>
+              <p className="text-sm text-[#a1a1a8] leading-relaxed">
                 {isCurrentUser
                   ? "You haven't posted anything yet. Share your thoughts on Home!"
                   : `@${profile.username} hasn't posted anything yet.`}
@@ -763,21 +777,21 @@ export const Profile: React.FC = () => {
               />
             ))}
 
-            {/* Load More Button */}
+            {/* Load More Button: centered secondary button */}
             {postsHasMore && (
-              <div className="pt-2 pb-4 text-center">
+              <div className="pt-2 pb-4 text-center flex justify-center">
                 <button
                   type="button"
                   onClick={handleLoadMorePosts}
                   disabled={postsLoadingMore}
                   aria-label="Load more posts"
-                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm rounded-xl border border-slate-200/90 shadow-2xs transition-all disabled:opacity-60 cursor-pointer"
+                  className="h-11 px-6 rounded-full border border-[#3a3a40] text-[#f2f2f3] font-medium text-sm hover:bg-[#1c1c1f] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3]"
                 >
                   {postsLoadingMore ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin text-[#f2f2f3]" />
                       <span>Loading more posts...</span>
-                    </>
+                    </div>
                   ) : (
                     <span>Load more</span>
                   )}
@@ -801,68 +815,72 @@ export const Profile: React.FC = () => {
         />
       )}
 
-      {/* Edit Profile Modal Dialog */}
+      {/* Edit Profile Modal Dialog: surface card, 16px radius, dimmed #000 at 70% overlay, Esc closes */}
       {isEditing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-in fade-in duration-200">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200"
+          onClick={handleCloseEdit}
+        >
           <div
-            className="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden animate-in zoom-in-95 duration-200"
+            className="bg-[#141416] w-full max-w-lg rounded-2xl shadow-2xl border border-[#26262a] overflow-hidden animate-in zoom-in-95 duration-200"
             role="dialog"
             aria-modal="true"
             aria-labelledby="edit-profile-title"
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-              <h2 id="edit-profile-title" className="text-lg font-bold text-slate-900">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-[#26262a]">
+              <h2 id="edit-profile-title" className="text-lg font-bold text-[#f2f2f3]">
                 Edit Profile
               </h2>
               <button
                 type="button"
                 onClick={handleCloseEdit}
                 disabled={isSaving}
-                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition-colors"
+                className="text-[#a1a1a8] hover:text-[#f2f2f3] p-1.5 rounded-full hover:bg-[#1c1c1f] transition-colors cursor-pointer"
                 aria-label="Close dialog"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5" strokeWidth={1.75} />
               </button>
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSaveProfile} className="p-6 space-y-4.5" noValidate>
+            <form onSubmit={handleSaveProfile} className="p-6 space-y-4" noValidate>
               {editFormErrors.general && (
-                <div className="flex items-start gap-2.5 p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800">
-                  <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-2.5 p-3.5 bg-[#1c1c1f] border border-[#26262a] rounded-xl text-xs text-[#f2f2f3]">
+                  <AlertCircle className="w-4 h-4 text-[#f2f2f3] shrink-0 mt-0.5" strokeWidth={1.75} />
                   <span>{editFormErrors.general}</span>
                 </div>
               )}
 
               {/* Username (Not editable) */}
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-[13px] font-medium text-[#a1a1a8] mb-2">
                   Username
                 </label>
                 <input
                   type="text"
                   disabled
                   value={`@${profile.username}`}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-500 text-sm bg-slate-100/80 cursor-not-allowed select-none"
+                  className="w-full h-12 px-4 rounded-xl border border-[#2a2a2e] text-[#a1a1a8] text-sm bg-[#0b0b0c]/60 cursor-not-allowed select-none"
                 />
-                <p className="mt-1 text-[11px] text-slate-400">
+                <p className="mt-1.5 text-[11px] text-[#8a8a92]">
                   Usernames cannot be changed once created.
                 </p>
               </div>
 
               {/* Display Name (max 50 chars) */}
               <div>
-                <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center justify-between mb-2">
                   <label
                     htmlFor="edit-display-name"
-                    className="block text-xs font-bold uppercase tracking-wider text-slate-700"
+                    className="block text-[13px] font-medium text-[#a1a1a8]"
                   >
                     Display Name
                   </label>
                   <span
                     className={`text-[11px] font-medium ${
-                      editDisplayName.length > 50 ? 'text-rose-600 font-bold' : 'text-slate-400'
+                      editDisplayName.length > 50 ? 'text-[#f2f2f3] font-bold underline' : 'text-[#8a8a92]'
                     }`}
                   >
                     {editDisplayName.length}/50
@@ -880,15 +898,11 @@ export const Profile: React.FC = () => {
                       setEditFormErrors((prev) => ({ ...prev, displayName: '' }));
                     }
                   }}
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-slate-900 text-sm bg-slate-50/50 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all ${
-                    editFormErrors.displayName
-                      ? 'border-rose-300 focus:ring-rose-500'
-                      : 'border-slate-200'
-                  }`}
+                  className="w-full h-12 px-4 rounded-xl border border-[#2a2a2e] text-[#f2f2f3] placeholder-[#8a8a92] text-sm bg-[#0b0b0c] focus:outline-none focus:border-[#3a3a40] focus-visible:ring-2 focus-visible:ring-[#f2f2f3] transition-all"
                   placeholder="Your Name"
                 />
                 {editFormErrors.displayName && (
-                  <p className="mt-1 text-xs text-rose-600 font-medium">
+                  <p className="mt-1 text-xs text-[#f2f2f3] font-medium">
                     {editFormErrors.displayName}
                   </p>
                 )}
@@ -896,16 +910,16 @@ export const Profile: React.FC = () => {
 
               {/* Bio (max 160 chars) */}
               <div>
-                <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center justify-between mb-2">
                   <label
                     htmlFor="edit-bio"
-                    className="block text-xs font-bold uppercase tracking-wider text-slate-700"
+                    className="block text-[13px] font-medium text-[#a1a1a8]"
                   >
                     Bio
                   </label>
                   <span
                     className={`text-[11px] font-medium ${
-                      editBio.length > 160 ? 'text-rose-600 font-bold' : 'text-slate-400'
+                      editBio.length > 160 ? 'text-[#f2f2f3] font-bold underline' : 'text-[#8a8a92]'
                     }`}
                   >
                     {editBio.length}/160
@@ -922,15 +936,11 @@ export const Profile: React.FC = () => {
                       setEditFormErrors((prev) => ({ ...prev, bio: '' }));
                     }
                   }}
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-slate-900 text-sm bg-slate-50/50 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all resize-none ${
-                    editFormErrors.bio
-                      ? 'border-rose-300 focus:ring-rose-500'
-                      : 'border-slate-200'
-                  }`}
+                  className="w-full p-3.5 rounded-xl border border-[#2a2a2e] text-[#f2f2f3] placeholder-[#8a8a92] text-sm bg-[#0b0b0c] focus:outline-none focus:border-[#3a3a40] focus-visible:ring-2 focus-visible:ring-[#f2f2f3] transition-all resize-none"
                   placeholder="Tell Circle about yourself..."
                 />
                 {editFormErrors.bio && (
-                  <p className="mt-1 text-xs text-rose-600 font-medium">{editFormErrors.bio}</p>
+                  <p className="mt-1 text-xs text-[#f2f2f3] font-medium">{editFormErrors.bio}</p>
                 )}
               </div>
 
@@ -938,12 +948,12 @@ export const Profile: React.FC = () => {
               <div>
                 <label
                   htmlFor="edit-avatar-url"
-                  className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5"
+                  className="block text-[13px] font-medium text-[#a1a1a8] mb-2"
                 >
                   Avatar URL
                 </label>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 shrink-0">
+                  <div className="w-11 h-11 rounded-full bg-[#26262a] border border-[#3a3a40] overflow-hidden flex items-center justify-center text-[#a1a1a8] shrink-0">
                     {editAvatarUrl.trim() ? (
                       <img
                         src={editAvatarUrl.trim()}
@@ -954,7 +964,7 @@ export const Profile: React.FC = () => {
                         }}
                       />
                     ) : (
-                      <ImageIcon className="w-5 h-5 text-slate-400" />
+                      <ImageIcon className="w-5 h-5 text-[#a1a1a8]" strokeWidth={1.75} />
                     )}
                   </div>
                   <input
@@ -963,28 +973,28 @@ export const Profile: React.FC = () => {
                     value={editAvatarUrl}
                     onChange={(e) => setEditAvatarUrl(e.target.value)}
                     placeholder="https://example.com/avatar.jpg"
-                    className="flex-1 px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-900 text-sm bg-slate-50/50 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all"
+                    className="flex-1 h-12 px-4 rounded-xl border border-[#2a2a2e] text-[#f2f2f3] placeholder-[#8a8a92] text-sm bg-[#0b0b0c] focus:outline-none focus:border-[#3a3a40] focus-visible:ring-2 focus-visible:ring-[#f2f2f3] transition-all"
                   />
                 </div>
-                <p className="mt-1 text-[11px] text-slate-400">
+                <p className="mt-1.5 text-[11px] text-[#8a8a92]">
                   Optional image URL for your profile picture.
                 </p>
               </div>
 
-              {/* Action Buttons */}
-              <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-100">
+              {/* Action Buttons: Cancel (secondary), Save Changes (primary) */}
+              <div className="pt-4 flex items-center justify-end gap-3 border-t border-[#26262a]">
                 <button
                   type="button"
                   onClick={handleCloseEdit}
                   disabled={isSaving}
-                  className="px-4 py-2.5 text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-colors disabled:opacity-50"
+                  className="h-11 px-5 text-sm font-medium text-[#f2f2f3] hover:bg-[#1c1c1f] rounded-full border border-[#3a3a40] transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-all shadow-xs disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
+                  className="h-11 px-6 inline-flex items-center gap-2 bg-[#f2f2f3] hover:bg-[#d4d4d8] text-[#0b0b0c] font-semibold text-sm rounded-full transition-colors disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
                 >
                   {isSaving ? (
                     <>

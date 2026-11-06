@@ -148,12 +148,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const userInitials = getInitials(profile?.display_name, profile?.username);
 
   return (
-    <div className="space-y-4 pt-4 border-t border-slate-100">
+    <div className="space-y-4 pt-4 border-t border-[#26262a]">
       {/* Comment Input Form */}
       {user && (
-        <form onSubmit={handleSubmitComment} className="flex items-start gap-2.5">
+        <form onSubmit={handleSubmitComment} className="flex items-start gap-3">
           <div className="shrink-0 pt-1">
-            <div className="w-8 h-8 rounded-full bg-red-600 text-white font-bold text-xs flex items-center justify-center ring-2 ring-slate-100 shadow-2xs overflow-hidden">
+            <div className="w-8 h-8 rounded-full bg-[#26262a] text-[#f2f2f3] font-bold text-xs flex items-center justify-center border border-[#3a3a40] overflow-hidden">
               {profile?.avatar_url ? (
                 <img
                   src={profile.avatar_url}
@@ -175,14 +175,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                 onChange={(e) => setNewContent(e.target.value)}
                 placeholder="Write a comment..."
                 aria-label="Write a comment"
-                className="w-full p-2.5 text-xs sm:text-sm text-slate-900 placeholder-slate-400 bg-slate-50/80 rounded-xl border border-slate-200 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all resize-none"
+                className="w-full min-h-[48px] p-3 text-sm text-[#f2f2f3] placeholder-[#8a8a92] bg-[#0b0b0c] rounded-xl border border-[#2a2a2e] focus:border-[#3a3a40] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] transition-all resize-none"
               />
             </div>
 
-            <div className="mt-1.5 flex items-center justify-between gap-2">
+            <div className="mt-2 flex items-center justify-between gap-2">
               <span
                 className={`text-[11px] font-medium tabular-nums ${
-                  isOverLimit ? 'text-rose-600 font-bold' : 'text-slate-400'
+                  isOverLimit ? 'text-[#f2f2f3] font-bold underline' : 'text-[#a1a1a8]'
                 }`}
               >
                 {charCount}/300
@@ -192,7 +192,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                 type="submit"
                 disabled={isSubmitDisabled}
                 aria-label="Post comment"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-all shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                className="h-9 px-4 inline-flex items-center gap-1.5 bg-[#f2f2f3] hover:bg-[#d4d4d8] text-[#0b0b0c] font-semibold text-xs rounded-full transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3]"
               >
                 {isSubmitting ? (
                   <>
@@ -201,7 +201,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                   </>
                 ) : (
                   <>
-                    <Send className="w-3 h-3" />
+                    <Send className="w-3 h-3" strokeWidth={1.75} />
                     <span>Reply</span>
                   </>
                 )}
@@ -218,22 +218,22 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           <CommentSkeleton />
         </div>
       ) : error ? (
-        <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl flex items-center justify-between text-xs text-rose-800">
+        <div className="p-3 bg-[#141416] border border-[#26262a] rounded-xl flex items-center justify-between text-xs text-[#a1a1a8]">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-[#f2f2f3] shrink-0" strokeWidth={1.75} />
             <span>{error}</span>
           </div>
           <button
             type="button"
             onClick={fetchComments}
             aria-label="Retry loading comments"
-            className="font-bold underline text-rose-900 hover:text-rose-700 cursor-pointer"
+            className="font-semibold underline text-[#f2f2f3] hover:text-[#d4d4d8] cursor-pointer"
           >
             Retry
           </button>
         </div>
       ) : comments.length === 0 ? (
-        <div className="py-4 text-center text-slate-400">
+        <div className="py-4 text-center text-[#a1a1a8]">
           <p className="text-xs">No comments yet. Start the conversation!</p>
         </div>
       ) : (

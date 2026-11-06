@@ -419,289 +419,294 @@ export const Home: React.FC = () => {
   const userInitials = getInitials(profile?.display_name, profile?.username);
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-      {/* Main Feed Column (2 cols on lg) */}
-      <div className="lg:col-span-2 space-y-6">
-        {/* Post Composer Card */}
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 sm:p-6 shadow-xs">
-          <form onSubmit={handleCreatePost}>
-            <div className="flex items-start gap-3.5">
-              {/* User Avatar */}
-              <div className="shrink-0 pt-1">
-                <div className="w-10 h-10 rounded-full bg-red-600 text-white font-bold text-sm flex items-center justify-center ring-2 ring-slate-100 shadow-2xs overflow-hidden">
-                  {profile?.avatar_url ? (
-                    <img
-                      src={profile.avatar_url}
-                      alt={profile.display_name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <span>{userInitials}</span>
-                  )}
-                </div>
-              </div>
-
-              {/* Composer Textarea */}
-              <div className="flex-1 min-w-0">
-                <textarea
-                  rows={3}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="What's happening in your circle?"
-                  aria-label="What's happening in your circle?"
-                  className="w-full p-2.5 sm:p-3 text-slate-900 text-sm sm:text-base placeholder-slate-400 bg-slate-50/50 rounded-xl border border-slate-200/80 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500 transition-all resize-none"
-                />
-
-                {/* Composer Footer: Counter and Post Button */}
-                <div className="mt-3 flex items-center justify-between gap-3 pt-2 border-t border-slate-100">
-                  <span
-                    className={`text-xs font-semibold tabular-nums ${
-                      isOverLimit ? 'text-rose-600 font-bold' : 'text-slate-400'
-                    }`}
-                  >
-                    {characterCount}/500
-                  </span>
-
-                  <button
-                    type="submit"
-                    disabled={isPostDisabled}
-                    aria-label="Publish post"
-                    className="inline-flex items-center gap-2 px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-all shadow-xs disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Posting...</span>
-                      </>
+    <div className="max-w-[1040px] mx-auto px-4 sm:px-8 py-8">
+      <div className="flex flex-col min-[860px]:flex-row gap-8 items-start">
+        {/* Main Feed Column */}
+        <div className="flex-1 min-w-0 space-y-4">
+          {/* Post Composer Card */}
+          <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-5">
+            <form onSubmit={handleCreatePost}>
+              <div className="flex items-start gap-3.5">
+                {/* User Avatar (44px) */}
+                <div className="shrink-0 pt-0.5">
+                  <div className="w-11 h-11 rounded-full bg-[#26262a] text-[#f2f2f3] font-bold text-sm flex items-center justify-center border border-[#3a3a40] overflow-hidden">
+                    {profile?.avatar_url ? (
+                      <img
+                        src={profile.avatar_url}
+                        alt={profile.display_name}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
-                      <>
-                        <Send className="w-3.5 h-3.5" />
-                        <span>Post</span>
-                      </>
+                      <span>{userInitials}</span>
                     )}
-                  </button>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </form>
-        </div>
 
-        {/* Feed Tabs: Everyone & Following */}
-        <div className="flex items-center gap-2 border-b border-slate-200/80">
-          <button
-            type="button"
-            onClick={() => setActiveTab('everyone')}
-            aria-selected={activeTab === 'everyone'}
-            className={`pb-3 px-3 text-sm font-bold flex items-center gap-2 transition-all cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-t-lg ${
-              activeTab === 'everyone'
-                ? 'border-b-2 border-indigo-600 text-indigo-600'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            <span>Everyone</span>
-          </button>
+                {/* Composer Textarea */}
+                <div className="flex-1 min-w-0">
+                  <textarea
+                    rows={3}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    placeholder="What's happening in your circle?"
+                    aria-label="What's happening in your circle?"
+                    className="w-full bg-transparent border-none text-[#f2f2f3] text-[16px] placeholder-[#8a8a92] focus:outline-none focus:ring-0 resize-none p-1"
+                  />
 
-          <button
-            type="button"
-            onClick={() => setActiveTab('following')}
-            aria-selected={activeTab === 'following'}
-            className={`pb-3 px-3 text-sm font-bold flex items-center gap-2 transition-all cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-t-lg ${
-              activeTab === 'following'
-                ? 'border-b-2 border-indigo-600 text-indigo-600'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            <span>Following</span>
-            {myFollowingIds.length > 0 && (
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                {myFollowingIds.length}
-              </span>
-            )}
-          </button>
-        </div>
-
-        {/* Feed Content with Loading Skeletons */}
-        {loading ? (
-          <div className="space-y-4">
-            <PostSkeleton />
-            <PostSkeleton />
-            <PostSkeleton />
-          </div>
-        ) : feedError ? (
-          <div className="bg-white border border-rose-200 rounded-2xl p-8 text-center max-w-md mx-auto shadow-xs">
-            <AlertCircle className="w-10 h-10 text-rose-500 mx-auto mb-3" />
-            <h3 className="text-base font-bold text-slate-900">Failed to load feed</h3>
-            <p className="mt-1 text-xs text-slate-600 mb-4">{feedError}</p>
-            <button
-              type="button"
-              onClick={fetchFeed}
-              aria-label="Retry loading feed"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-semibold text-xs rounded-xl hover:bg-indigo-700 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500"
-            >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>Try Again</span>
-            </button>
-          </div>
-        ) : activeTab === 'following' && followingEmpty ? (
-          /* Following Tab empty state: "Follow people to see their posts here" */
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-10 sm:p-14 text-center shadow-xs">
-            <div className="max-w-sm mx-auto space-y-3">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto ring-8 ring-indigo-50/50">
-                <Users className="w-7 h-7" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900">
-                Follow people to see their posts here
-              </h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                When you follow other people in Circle, their latest updates and posts will appear in this feed.
-              </p>
-            </div>
-          </div>
-        ) : posts.length === 0 ? (
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-10 sm:p-14 text-center shadow-xs">
-            <div className="max-w-sm mx-auto space-y-3">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto ring-8 ring-indigo-50/50">
-                <MessageSquare className="w-7 h-7" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900">No posts yet</h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                {activeTab === 'following'
-                  ? "Nobody you follow has posted yet. Share something above!"
-                  : "The circle is quiet right now. Use the composer above to share the first thought!"}
-              </p>
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {posts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                currentUserId={user?.id}
-                isLiked={likedPostIds.has(post.id)}
-                onToggleLike={handleToggleLike}
-                onDelete={handleDeletePost}
-              />
-            ))}
-
-            {/* Load More Button */}
-            {hasMore && (
-              <div className="pt-2 pb-4 text-center">
-                <button
-                  type="button"
-                  onClick={handleLoadMore}
-                  disabled={loadingMore}
-                  aria-label="Load more posts"
-                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm rounded-xl border border-slate-200/90 shadow-2xs transition-all disabled:opacity-60 cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500"
-                >
-                  {loadingMore ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
-                      <span>Loading more posts...</span>
-                    </>
-                  ) : (
-                    <span>Load more</span>
-                  )}
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Suggested People Sidebar Card (1 col on lg) */}
-      <div className="lg:col-span-1 space-y-4">
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-xs sticky top-20">
-          <div className="flex items-center justify-between gap-2 mb-4">
-            <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
-              <Sparkles className="w-4 h-4 text-indigo-600" />
-              <span>Suggested people</span>
-            </div>
-            {suggestedLoading && (
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-600" />
-            )}
-          </div>
-
-          {suggestedLoading && suggestedUsers.length === 0 ? (
-            <div className="divide-y divide-slate-100">
-              <SuggestedUserSkeleton />
-              <SuggestedUserSkeleton />
-              <SuggestedUserSkeleton />
-            </div>
-          ) : suggestedUsers.length === 0 ? (
-            <div className="py-5 text-center text-slate-400 text-xs">
-              <p>No new suggestions right now.</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-slate-100">
-              {suggestedUsers.map((su) => {
-                const isFollowed = followedSuggestedIds.has(su.id);
-                const isInFlight = followInFlight.has(su.id);
-                const suInitials = getInitials(su.display_name, su.username);
-
-                return (
-                  <div
-                    key={su.id}
-                    className="flex items-center justify-between py-3 gap-2 first:pt-0 last:pb-0"
-                  >
-                    <Link
-                      to={`/u/${su.username}`}
-                      aria-label={`View ${su.display_name}'s profile`}
-                      className="flex items-center gap-2.5 min-w-0 group focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-lg p-0.5"
-                    >
-                      <div className="w-9 h-9 rounded-full bg-red-600 text-white font-bold text-xs flex items-center justify-center ring-2 ring-slate-100 shadow-2xs group-hover:scale-105 transition-transform shrink-0 overflow-hidden">
-                        {su.avatar_url ? (
-                          <img
-                            src={su.avatar_url}
-                            alt={su.display_name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <span>{suInitials}</span>
-                        )}
-                      </div>
-
-                      <div className="min-w-0 leading-tight">
-                        <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 truncate transition-colors">
-                          {su.display_name}
-                        </div>
-                        <div className="text-[11px] text-slate-400 truncate">
-                          @{su.username}
-                        </div>
-                      </div>
-                    </Link>
-
-                    {/* Follow button */}
-                    <button
-                      type="button"
-                      onClick={() => handleFollowSuggested(su.id, su.username)}
-                      disabled={isFollowed || isInFlight}
-                      aria-label={isFollowed ? `Following ${su.display_name}` : `Follow ${su.display_name}`}
-                      className={`shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all disabled:opacity-60 cursor-pointer focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500 ${
-                        isFollowed
-                          ? 'bg-slate-100 text-slate-700 border border-slate-200'
-                          : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xs'
+                  {/* Composer Footer: Divider, Counter, and Post Button */}
+                  <div className="mt-3 pt-3 border-t border-[#26262a] flex items-center justify-between gap-3">
+                    <span
+                      className={`text-[13px] tabular-nums ${
+                        isOverLimit ? 'text-[#f2f2f3] font-bold underline' : 'text-[#a1a1a8]'
                       }`}
                     >
-                      {isInFlight ? (
-                        <Loader2 className="w-3 h-3 animate-spin" />
-                      ) : isFollowed ? (
-                        <>
-                          <UserCheck className="w-3 h-3 text-indigo-600" />
-                          <span>Following</span>
-                        </>
+                      {characterCount} / 500
+                    </span>
+
+                    <button
+                      type="submit"
+                      disabled={isPostDisabled}
+                      aria-label="Publish post"
+                      className="h-11 px-6 bg-[#f2f2f3] hover:bg-[#d4d4d8] text-[#0b0b0c] font-semibold text-sm rounded-full transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3]"
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Posting...</span>
+                        </div>
                       ) : (
-                        <>
-                          <UserPlus className="w-3 h-3" />
-                          <span>Follow</span>
-                        </>
+                        <span>Post</span>
                       )}
                     </button>
                   </div>
-                );
-              })}
+                </div>
+              </div>
+            </form>
+          </div>
+
+          {/* Feed Tabs: Everyone & Following (pill buttons, active = white bg with black text, inactive = muted text with 1px border) */}
+          <div className="flex items-center gap-2.5 py-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab('everyone')}
+              aria-selected={activeTab === 'everyone'}
+              aria-pressed={activeTab === 'everyone'}
+              className={`h-11 px-5 rounded-full text-sm font-medium transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] ${
+                activeTab === 'everyone'
+                  ? 'bg-[#f2f2f3] text-[#0b0b0c] font-semibold'
+                  : 'bg-transparent border border-[#26262a] text-[#a1a1a8] hover:text-[#f2f2f3] hover:bg-[#1c1c1f]'
+              }`}
+            >
+              Everyone
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('following')}
+              aria-selected={activeTab === 'following'}
+              aria-pressed={activeTab === 'following'}
+              className={`h-11 px-5 rounded-full text-sm font-medium transition-colors cursor-pointer flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] ${
+                activeTab === 'following'
+                  ? 'bg-[#f2f2f3] text-[#0b0b0c] font-semibold'
+                  : 'bg-transparent border border-[#26262a] text-[#a1a1a8] hover:text-[#f2f2f3] hover:bg-[#1c1c1f]'
+              }`}
+            >
+              <span>Following</span>
+              {myFollowingIds.length > 0 && (
+                <span
+                  className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                    activeTab === 'following'
+                      ? 'bg-[#0b0b0c] text-[#f2f2f3]'
+                      : 'bg-[#1c1c1f] text-[#a1a1a8]'
+                  }`}
+                >
+                  {myFollowingIds.length}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Feed Content with Loading Skeletons */}
+          {loading ? (
+            <div className="space-y-4">
+              <PostSkeleton />
+              <PostSkeleton />
+              <PostSkeleton />
+            </div>
+          ) : feedError ? (
+            <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-8 text-center max-w-md mx-auto">
+              <AlertCircle className="w-10 h-10 text-[#f2f2f3] mx-auto mb-3" strokeWidth={1.75} />
+              <h3 className="text-base font-bold text-[#f2f2f3]">Failed to load feed</h3>
+              <p className="mt-1 text-xs text-[#a1a1a8] mb-4">{feedError}</p>
+              <button
+                type="button"
+                onClick={fetchFeed}
+                aria-label="Retry loading feed"
+                className="h-11 px-6 rounded-full bg-[#f2f2f3] hover:bg-[#d4d4d8] text-[#0b0b0c] font-semibold text-xs transition-colors cursor-pointer"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : activeTab === 'following' && followingEmpty ? (
+            /* Following Tab empty state: "Follow people to see their posts here" */
+            <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-10 sm:p-14 text-center">
+              <div className="max-w-sm mx-auto space-y-3">
+                <div className="w-14 h-14 rounded-2xl bg-[#1c1c1f] border border-[#26262a] text-[#f2f2f3] flex items-center justify-center mx-auto">
+                  <Users className="w-7 h-7" strokeWidth={1.75} />
+                </div>
+                <h3 className="text-lg font-bold text-[#f2f2f3]">
+                  Follow people to see their posts here
+                </h3>
+                <p className="text-sm text-[#a1a1a8] leading-relaxed">
+                  When you follow other people in Circle, their latest updates and posts will appear in this feed.
+                </p>
+              </div>
+            </div>
+          ) : posts.length === 0 ? (
+            <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-10 sm:p-14 text-center">
+              <div className="max-w-sm mx-auto space-y-3">
+                <div className="w-14 h-14 rounded-2xl bg-[#1c1c1f] border border-[#26262a] text-[#f2f2f3] flex items-center justify-center mx-auto">
+                  <MessageSquare className="w-7 h-7" strokeWidth={1.75} />
+                </div>
+                <h3 className="text-lg font-bold text-[#f2f2f3]">No posts yet</h3>
+                <p className="text-sm text-[#a1a1a8] leading-relaxed">
+                  {activeTab === 'following'
+                    ? "Nobody you follow has posted yet. Share something above!"
+                    : "The circle is quiet right now. Use the composer above to share the first thought!"}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {posts.map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  currentUserId={user?.id}
+                  isLiked={likedPostIds.has(post.id)}
+                  onToggleLike={handleToggleLike}
+                  onDelete={handleDeletePost}
+                />
+              ))}
+
+              {/* Load More Button: centered secondary button */}
+              {hasMore && (
+                <div className="pt-2 pb-4 text-center flex justify-center">
+                  <button
+                    type="button"
+                    onClick={handleLoadMore}
+                    disabled={loadingMore}
+                    aria-label="Load more posts"
+                    className="h-11 px-6 rounded-full border border-[#3a3a40] text-[#f2f2f3] font-medium text-sm hover:bg-[#1c1c1f] transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3]"
+                  >
+                    {loadingMore ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin text-[#f2f2f3]" />
+                        <span>Loading more posts...</span>
+                      </div>
+                    ) : (
+                      <span>Load more</span>
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           )}
+        </div>
+
+        {/* Suggested People Sidebar Card (300px sticky right sidebar, hidden below 860px) */}
+        <div className="w-[300px] shrink-0 sticky top-24 hidden min-[860px]:block space-y-4">
+          <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-5">
+            <div className="flex items-center justify-between gap-2 mb-4">
+              <div className="text-[#f2f2f3] font-bold text-sm tracking-tight">
+                Suggested people
+              </div>
+              {suggestedLoading && (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#a1a1a8]" />
+              )}
+            </div>
+
+            {suggestedLoading && suggestedUsers.length === 0 ? (
+              <div className="divide-y divide-[#26262a]">
+                <SuggestedUserSkeleton />
+                <SuggestedUserSkeleton />
+                <SuggestedUserSkeleton />
+              </div>
+            ) : suggestedUsers.length === 0 ? (
+              <div className="py-5 text-center text-[#a1a1a8] text-xs">
+                <p>No new suggestions right now.</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-[#26262a]">
+                {suggestedUsers.map((su) => {
+                  const isFollowed = followedSuggestedIds.has(su.id);
+                  const isInFlight = followInFlight.has(su.id);
+                  const suInitials = getInitials(su.display_name, su.username);
+
+                  return (
+                    <div
+                      key={su.id}
+                      className="flex items-center justify-between py-3 gap-2 first:pt-0 last:pb-0"
+                    >
+                      <Link
+                        to={`/u/${su.username}`}
+                        aria-label={`View ${su.display_name}'s profile`}
+                        className="flex items-center gap-2.5 min-w-0 group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3]"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-[#26262a] text-[#f2f2f3] font-bold text-xs flex items-center justify-center border border-[#3a3a40] shrink-0 overflow-hidden">
+                          {su.avatar_url ? (
+                            <img
+                              src={su.avatar_url}
+                              alt={su.display_name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span>{suInitials}</span>
+                          )}
+                        </div>
+
+                        <div className="min-w-0 leading-tight">
+                          <div className="text-xs font-semibold text-[#f2f2f3] group-hover:text-[#d4d4d8] truncate transition-colors">
+                            {su.display_name}
+                          </div>
+                          <div className="text-[11px] text-[#a1a1a8] truncate">
+                            @{su.username}
+                          </div>
+                        </div>
+                      </Link>
+
+                      {/* Secondary Follow button */}
+                      <button
+                        type="button"
+                        onClick={() => handleFollowSuggested(su.id, su.username)}
+                        disabled={isFollowed || isInFlight}
+                        aria-label={isFollowed ? `Following ${su.display_name}` : `Follow ${su.display_name}`}
+                        className={`shrink-0 inline-flex items-center gap-1 h-8 px-3.5 rounded-full text-xs font-semibold transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] ${
+                          isFollowed
+                            ? 'bg-transparent text-[#a1a1a8] border border-[#2a2a2e]'
+                            : 'bg-transparent border border-[#3a3a40] text-[#f2f2f3] hover:bg-[#1c1c1f]'
+                        }`}
+                      >
+                        {isInFlight ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : isFollowed ? (
+                          <>
+                            <UserCheck className="w-3 h-3 text-[#a1a1a8]" strokeWidth={1.75} />
+                            <span>Following</span>
+                          </>
+                        ) : (
+                          <>
+                            <UserPlus className="w-3 h-3 text-[#f2f2f3]" strokeWidth={1.75} />
+                            <span>Follow</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

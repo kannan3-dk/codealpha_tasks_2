@@ -132,8 +132,8 @@ export const PostDetail: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="space-y-5 max-w-2xl mx-auto">
-        <div className="h-5 w-24 bg-slate-200 rounded-md animate-pulse" />
+      <div className="space-y-5 max-w-[720px] mx-auto px-4 py-8">
+        <div className="h-5 w-24 bg-[#1c1c1f] rounded-md animate-pulse" />
         <PostSkeleton />
       </div>
     );
@@ -141,23 +141,25 @@ export const PostDetail: React.FC = () => {
 
   if (notFound || !post) {
     return (
-      <div className="bg-white border border-slate-200/80 rounded-2xl p-8 sm:p-12 text-center max-w-lg mx-auto shadow-xs">
-        <div className="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4 ring-8 ring-rose-50/50">
-          <MessageCircle className="w-7 h-7" />
-        </div>
-        <h2 className="text-xl font-bold text-slate-900">Post not found</h2>
-        <p className="mt-2 text-sm text-slate-600">
-          This post may have been deleted by the author or does not exist.
-        </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            aria-label="Return to Feed"
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white font-bold text-sm rounded-xl hover:bg-indigo-700 transition-colors shadow-xs"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Return to Feed</span>
-          </Link>
+      <div className="max-w-[720px] mx-auto px-4 py-8">
+        <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-8 sm:p-12 text-center max-w-lg mx-auto">
+          <div className="w-14 h-14 rounded-2xl bg-[#1c1c1f] border border-[#26262a] text-[#f2f2f3] flex items-center justify-center mx-auto mb-4">
+            <MessageCircle className="w-7 h-7" strokeWidth={1.75} />
+          </div>
+          <h2 className="text-xl font-bold text-[#f2f2f3]">Post not found</h2>
+          <p className="mt-2 text-sm text-[#a1a1a8]">
+            This post may have been deleted by the author or does not exist.
+          </p>
+          <div className="mt-6">
+            <Link
+              to="/"
+              aria-label="Return to Feed"
+              className="inline-flex items-center gap-2 h-11 px-6 bg-[#f2f2f3] hover:bg-[#d4d4d8] text-[#0b0b0c] font-semibold text-sm rounded-full transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" strokeWidth={1.75} />
+              <span>Return to Feed</span>
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -165,31 +167,33 @@ export const PostDetail: React.FC = () => {
 
   if (errorMessage) {
     return (
-      <div className="bg-white border border-rose-200 rounded-2xl p-8 text-center max-w-md mx-auto shadow-xs">
-        <AlertCircle className="w-10 h-10 text-rose-500 mx-auto mb-3" />
-        <h3 className="text-base font-bold text-slate-900">Unable to load post</h3>
-        <p className="mt-1 text-xs text-slate-600 mb-4">{errorMessage}</p>
-        <button
-          type="button"
-          onClick={fetchPost}
-          aria-label="Retry loading post"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-semibold text-xs rounded-xl hover:bg-indigo-700 transition-colors cursor-pointer"
-        >
-          Try Again
-        </button>
+      <div className="max-w-[720px] mx-auto px-4 py-8">
+        <div className="bg-[#141416] border border-[#26262a] rounded-2xl p-8 text-center max-w-md mx-auto">
+          <AlertCircle className="w-10 h-10 text-[#f2f2f3] mx-auto mb-3" strokeWidth={1.75} />
+          <h3 className="text-base font-bold text-[#f2f2f3]">Unable to load post</h3>
+          <p className="mt-1 text-xs text-[#a1a1a8] mb-4">{errorMessage}</p>
+          <button
+            type="button"
+            onClick={fetchPost}
+            aria-label="Retry loading post"
+            className="h-11 px-6 bg-[#f2f2f3] hover:bg-[#d4d4d8] text-[#0b0b0c] font-semibold text-xs rounded-full transition-colors cursor-pointer"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-5 max-w-2xl mx-auto">
-      {/* Back button */}
+    <div className="space-y-5 max-w-[720px] mx-auto px-4 py-8">
+      {/* Back button: muted hover text #f2f2f3 */}
       <div>
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-indigo-600 transition-colors group"
+          className="inline-flex items-center gap-2 text-sm font-medium text-[#a1a1a8] hover:text-[#f2f2f3] transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] rounded-lg p-1"
         >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" strokeWidth={1.75} />
           <span>Back to Feed</span>
         </Link>
       </div>

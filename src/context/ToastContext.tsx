@@ -46,24 +46,18 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         {toasts.map((t) => (
           <div
             key={t.id}
-            className={`pointer-events-auto flex items-start gap-3 p-3.5 rounded-xl shadow-lg border text-sm transition-all duration-200 animate-in fade-in slide-in-from-bottom-2 ${
-              t.type === 'error'
-                ? 'bg-rose-50 border-rose-200 text-rose-900'
-                : t.type === 'success'
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
-                : 'bg-white border-slate-200 text-slate-800'
-            }`}
+            className="pointer-events-auto flex items-start gap-3 p-4 rounded-2xl shadow-2xl border border-[#26262a] bg-[#141416] text-[#f2f2f3] text-sm transition-all duration-200 animate-in fade-in slide-in-from-bottom-2"
           >
-            {t.type === 'error' && <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />}
-            {t.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />}
-            {t.type === 'info' && <Info className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />}
+            {t.type === 'error' && <AlertCircle className="w-5 h-5 text-[#f2f2f3] shrink-0 mt-0.5" strokeWidth={1.75} />}
+            {t.type === 'success' && <CheckCircle2 className="w-5 h-5 text-[#f2f2f3] shrink-0 mt-0.5" strokeWidth={1.75} />}
+            {t.type === 'info' && <Info className="w-5 h-5 text-[#a1a1a8] shrink-0 mt-0.5" strokeWidth={1.75} />}
             <p className="flex-1 font-medium leading-relaxed">{t.message}</p>
             <button
               onClick={() => removeToast(t.id)}
-              className="text-slate-400 hover:text-slate-600 transition-colors p-0.5 -mr-1"
+              className="text-[#a1a1a8] hover:text-[#f2f2f3] transition-colors p-0.5 -mr-1 cursor-pointer"
               aria-label="Dismiss"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4" strokeWidth={1.75} />
             </button>
           </div>
         ))}

@@ -30,118 +30,144 @@ export const Navbar: React.FC = () => {
   };
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all ${
+    `h-11 px-4 rounded-full text-sm font-medium flex items-center gap-2 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b0c] ${
       isActive
-        ? 'bg-indigo-50 text-indigo-700 shadow-xs'
-        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
+        ? 'bg-[#1c1c1f] text-[#f2f2f3]'
+        : 'text-[#a1a1a8] hover:text-[#f2f2f3] hover:bg-[#1c1c1f]/60'
     }`;
 
   const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold transition-all ${
+    `h-11 px-4 rounded-full text-sm font-medium flex items-center gap-3 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b0c] ${
       isActive
-        ? 'bg-indigo-50 text-indigo-700 font-bold'
-        : 'text-slate-700 hover:text-slate-900 hover:bg-slate-100'
+        ? 'bg-[#1c1c1f] text-[#f2f2f3]'
+        : 'text-[#a1a1a8] hover:text-[#f2f2f3] hover:bg-[#1c1c1f]/60'
     }`;
 
+  const getInitials = (displayName?: string | null, uname?: string | null) => {
+    const text = (displayName || uname || user?.email || 'U').trim();
+    const parts = text.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return text.slice(0, 2).toUpperCase();
+  };
+
+  const initials = getInitials(profile?.display_name, profile?.username);
+
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand Logo */}
-          <NavLink
-            to="/"
-            className="flex items-center gap-2.5 group focus:outline-hidden focus:ring-2 focus:ring-indigo-500 rounded-lg"
-          >
-            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-red-600 text-white shadow-sm shadow-red-200 group-hover:scale-105 transition-transform duration-200">
-              {/* Sleek circle ring glyph */}
-              <span className="font-extrabold text-xl tracking-tighter">C</span>
-              <span className="absolute w-2 h-2 rounded-full bg-red-200 -top-0.5 -right-0.5 ring-2 ring-white animate-pulse" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-xl tracking-tight text-slate-900 leading-none">
+    <header className="sticky top-0 z-40 h-16 bg-[#0b0b0c]/95 backdrop-blur-md border-b border-[#26262a] transition-colors">
+      <div className="max-w-[1040px] mx-auto px-4 sm:px-8 h-full">
+        <div className="flex items-center justify-between h-full gap-4">
+          {/* Brand Logo & Left Nav */}
+          <div className="flex items-center gap-6">
+            <NavLink
+              to="/"
+              className="flex items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b0c]"
+              aria-label="Circle Home"
+            >
+              {/* Ring logo mark: 20px circle, 4px white border */}
+              <div className="w-5 h-5 rounded-full border-4 border-white shrink-0" />
+              <span className="text-[18px] font-bold text-[#f2f2f3] tracking-tight">
                 Circle
               </span>
-              <span className="text-[10px] font-medium text-slate-400 tracking-wider uppercase">
-                Social
-              </span>
+            </NavLink>
+
+            {/* Center-left Nav Links */}
+            <nav className="hidden md:flex items-center gap-1.5" aria-label="Main Navigation">
+              <NavLink to="/" end className={navLinkClass}>
+                <Home className="w-4 h-4" strokeWidth={1.75} />
+                <span>Home</span>
+              </NavLink>
+
+              <NavLink
+                to={profile?.username ? `/u/${profile.username}` : '/'}
+                className={navLinkClass}
+              >
+                <User className="w-4 h-4" strokeWidth={1.75} />
+                <span>My Profile</span>
+              </NavLink>
+            </nav>
+          </div>
+
+          {/* Right Section: Search Input + Profile Chip + Secondary Log out button */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Search Input: 240px pill, hidden below 860px */}
+            <div className="relative hidden min-[860px]:block">
+              <input
+                type="text"
+                placeholder="Search Circle..."
+                aria-label="Search"
+                className="w-[240px] h-11 px-4 rounded-full bg-[#141416] border border-[#2a2a2e] text-sm text-[#f2f2f3] placeholder-[#8a8a92] focus:outline-none focus:border-[#3a3a40] focus-visible:ring-2 focus-visible:ring-[#f2f2f3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b0c] transition-all"
+              />
             </div>
-          </NavLink>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-2" aria-label="Main Navigation">
-            <NavLink to="/" end className={navLinkClass}>
-              <Home className="w-4 h-4" />
-              <span>Home</span>
-            </NavLink>
-
-            <NavLink
-              to={profile?.username ? `/u/${profile.username}` : '/'}
-              className={navLinkClass}
-            >
-              <User className="w-4 h-4" />
-              <span>My Profile</span>
-            </NavLink>
-
-            <div className="h-5 w-px bg-slate-200 mx-1.5" />
-
-            {/* User Chip & Log Out */}
-            <div className="flex items-center gap-2 pl-1">
+            {/* User Profile Chip */}
+            {profile && (
               <NavLink
                 to={profileUrl}
-                className="flex items-center gap-2.5 py-1 px-2.5 rounded-xl hover:bg-slate-100 text-left transition-colors"
+                className="flex items-center gap-2.5 h-11 px-2.5 rounded-full hover:bg-[#1c1c1f] text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3]"
                 title="View your profile"
               >
-                <div className="w-8 h-8 rounded-full bg-red-600 text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs">
-                  {profile?.avatar_url ? (
+                <div className="w-8 h-8 rounded-full bg-[#26262a] text-[#f2f2f3] font-bold text-xs flex items-center justify-center overflow-hidden shrink-0 border border-[#3a3a40]">
+                  {profile.avatar_url ? (
                     <img
                       src={profile.avatar_url}
                       alt={profile.display_name || 'Avatar'}
                       className="w-full h-full rounded-full object-cover"
                     />
                   ) : (
-                    (profile?.display_name?.[0] || profile?.username?.[0] || user?.email?.[0] || 'U').toUpperCase()
+                    <span>{initials}</span>
                   )}
                 </div>
-                <div className="hidden lg:block leading-tight">
-                  <div className="text-xs font-bold text-slate-900 truncate max-w-[110px]">
-                    {profile?.display_name || 'My Account'}
+                <div className="hidden min-[960px]:block leading-tight pr-1">
+                  <div className="text-xs font-semibold text-[#f2f2f3] truncate max-w-[100px]">
+                    {profile.display_name}
                   </div>
-                  <div className="text-[11px] text-slate-400 truncate max-w-[110px]">
-                    @{profile?.username || 'user'}
+                  <div className="text-[11px] text-[#a1a1a8] truncate max-w-[100px]">
+                    @{profile.username}
                   </div>
                 </div>
               </NavLink>
+            )}
 
-              <button
-                type="button"
-                onClick={handleSignOut}
-                disabled={isLoggingOut}
-                className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-colors disabled:opacity-60"
-                title="Log out of Circle"
-              >
-                <LogOut className="w-4 h-4" />
-                <span>{isLoggingOut ? 'Logging out...' : 'Log out'}</span>
-              </button>
-            </div>
-          </nav>
+            {/* Secondary Log out button */}
+            <button
+              type="button"
+              onClick={handleSignOut}
+              disabled={isLoggingOut}
+              className="h-11 px-4 rounded-full border border-[#3a3a40] text-sm font-medium text-[#f2f2f3] hover:bg-[#1c1c1f] transition-colors duration-150 flex items-center gap-2 disabled:opacity-60 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0b0c]"
+              title="Log out of Circle"
+            >
+              <LogOut className="w-4 h-4 text-[#a1a1a8]" strokeWidth={1.75} />
+              <span>{isLoggingOut ? 'Logging out...' : 'Log out'}</span>
+            </button>
+          </div>
 
           {/* Mobile Menu Toggle Button */}
           <div className="flex items-center gap-2 md:hidden">
             {profileUsername && (
               <NavLink
                 to={profileUrl}
-                className="w-8 h-8 rounded-full bg-red-600 text-white font-bold text-xs flex items-center justify-center ring-2 ring-white shadow-xs"
+                className="w-9 h-9 rounded-full bg-[#26262a] text-[#f2f2f3] font-bold text-xs flex items-center justify-center overflow-hidden border border-[#3a3a40]"
               >
-                {(profile?.display_name?.[0] || profile?.username?.[0] || 'U').toUpperCase()}
+                {profile?.avatar_url ? (
+                  <img
+                    src={profile.avatar_url}
+                    alt={profile.display_name || 'Avatar'}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <span>{initials}</span>
+                )}
               </NavLink>
             )}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              className="p-2.5 rounded-full text-[#a1a1a8] hover:text-[#f2f2f3] hover:bg-[#1c1c1f] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f2f2f3]"
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" strokeWidth={1.75} /> : <Menu className="w-5 h-5" strokeWidth={1.75} />}
             </button>
           </div>
         </div>
@@ -149,10 +175,10 @@ export const Navbar: React.FC = () => {
 
       {/* Mobile Dropdown Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200/80 bg-white/95 backdrop-blur-md px-4 pt-3 pb-5 space-y-2 shadow-lg animate-in fade-in slide-in-from-top-2">
+        <div className="md:hidden border-b border-[#26262a] bg-[#141416] px-4 pt-3 pb-5 space-y-2 shadow-2xl animate-in fade-in slide-in-from-top-2">
           {profile && (
-            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl mb-3">
-              <div className="w-10 h-10 rounded-full bg-red-600 text-white font-bold text-sm flex items-center justify-center ring-2 ring-white">
+            <div className="flex items-center gap-3 p-3 bg-[#1c1c1f] rounded-xl mb-3 border border-[#26262a]">
+              <div className="w-10 h-10 rounded-full bg-[#26262a] text-[#f2f2f3] font-bold text-sm flex items-center justify-center overflow-hidden border border-[#3a3a40]">
                 {profile.avatar_url ? (
                   <img
                     src={profile.avatar_url}
@@ -160,14 +186,14 @@ export const Navbar: React.FC = () => {
                     className="w-full h-full rounded-full object-cover"
                   />
                 ) : (
-                  (profile.display_name?.[0] || profile.username?.[0] || 'U').toUpperCase()
+                  <span>{initials}</span>
                 )}
               </div>
               <div className="overflow-hidden">
-                <div className="font-bold text-slate-900 text-sm truncate">
+                <div className="font-semibold text-[#f2f2f3] text-sm truncate">
                   {profile.display_name}
                 </div>
-                <div className="text-xs text-slate-500 truncate">@{profile.username}</div>
+                <div className="text-xs text-[#a1a1a8] truncate">@{profile.username}</div>
               </div>
             </div>
           )}
@@ -178,7 +204,7 @@ export const Navbar: React.FC = () => {
             onClick={() => setMobileMenuOpen(false)}
             className={mobileNavLinkClass}
           >
-            <Home className="w-5 h-5 text-indigo-600" />
+            <Home className="w-4 h-4 text-[#a1a1a8]" strokeWidth={1.75} />
             <span>Home</span>
           </NavLink>
 
@@ -187,18 +213,18 @@ export const Navbar: React.FC = () => {
             onClick={() => setMobileMenuOpen(false)}
             className={mobileNavLinkClass}
           >
-            <User className="w-5 h-5 text-indigo-600" />
+            <User className="w-4 h-4 text-[#a1a1a8]" strokeWidth={1.75} />
             <span>My Profile</span>
           </NavLink>
 
-          <div className="pt-2 border-t border-slate-100">
+          <div className="pt-2 border-t border-[#26262a]">
             <button
               type="button"
               onClick={handleSignOut}
               disabled={isLoggingOut}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-60"
+              className="w-full h-11 px-4 rounded-full border border-[#3a3a40] text-sm font-medium text-[#f2f2f3] hover:bg-[#1c1c1f] transition-colors flex items-center gap-3 disabled:opacity-60 cursor-pointer"
             >
-              <LogOut className="w-5 h-5" />
+              <LogOut className="w-4 h-4 text-[#a1a1a8]" strokeWidth={1.75} />
               <span>{isLoggingOut ? 'Logging out...' : 'Log out'}</span>
             </button>
           </div>
